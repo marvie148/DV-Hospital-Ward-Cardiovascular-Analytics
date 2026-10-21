@@ -4,6 +4,6 @@
               or File → Embed report → Website or portal (secure; viewers sign in), https://app.powerbi.com/reportEmbed?...
    reportUrl: optional; the normal report link from the browser address bar, for the "Open in Power BI" button. */
 window.POWERBI_REPORT = {
-  embedUrl: "https://app.powerbi.com/view?r=eyJrIjoiOTBhOWExZTctZjE4OS00ODBiLTlmMzAtNDlkZGIyZmY1M2M2IiwidCI6ImQxZjE0MzQ4LWYxYjUtNGEwOS1hYzk5LTdlYmYyMTNjYmM4MSIsImMiOjEwfQ%3D%3D",
+  embedUrl: "https://app.powerbi.com/view?r=eyJrIjoiY2M5YWM3NTQtZmVlNS00NTAyLTg4YTctYjRjMTQyODM0MWMyIiwidCI6ImQxZjE0MzQ4LWYxYjUtNGEwOS1hYzk5LTdlYmYyMTNjYmM4MSIsImMiOjEwfQ%3D%3D",
   reportUrl: "",
 };
