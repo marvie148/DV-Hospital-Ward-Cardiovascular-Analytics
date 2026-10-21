@@ -1,0 +1,140 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Mumbai Ward Healthcare</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=10">
+</head>
+<body>
+<div class="accent-bar"></div>
+<header class="topbar">
+  <div class="brand">
+    <a class="home" href="../">← Mumbai ward health study</a>
+    <h1>Ward dashboard</h1>
+    <p class="sub">Mumbai's listed public facilities against Census 2011 population, plus three cardiovascular risk models trained on an Indian clinical dataset</p>
+  </div>
+  <div class="top-links">
+    <a class="api-link pbi-link" href="#powerbi" data-go="powerbi">Power BI Dashboard</a>
+    <a class="api-link" href="/api/docs" target="_blank" rel="noopener">FastAPI docs ↗</a>
+  </div>
+  <nav class="tabs" role="tablist">
+    <button role="tab" data-page="overview" aria-selected="true">Overview</button>
+    <button role="tab" data-page="predict" aria-selected="false">Heart risk predictor</button>
+    <button role="tab" data-page="powerbi" aria-selected="false">Power BI dashboard</button>
+  </nav>
+</header>
+
+<main>
+  <div id="loading" class="loading">Loading pipeline outputs…</div>
+  <div id="error" class="error" hidden></div>
+
+  <!-- ===== Page 1: Overview ===== -->
+  <section id="page-overview" class="page" hidden>
+    <div class="module-head"><span class="eyebrow">Module 1 · Cardiovascular risk models</span>
+      <span class="hint" id="ov-clin-src"></span></div>
+    <div class="model-strip" id="ov-models"><div class="card api-wait">Loading model results from the API…</div></div>
+    <div class="module-head"><span class="eyebrow">Module 2 · Mumbai healthcare infrastructure</span>
+      <span class="hint">Two separate analyses: the clinical data has no location and is never joined to wards.</span></div>
+    <div class="kpis" id="kpis"></div>
+    <div class="grid two">
+      <article class="card">
+        <h2>What the data shows</h2>
+        <ul class="obs" id="observations"></ul>
+      </article>
+      <article class="card">
+        <h2>Ward lookup</h2>
+        <p class="hint">Pick a ward for its population, sites, share gap and the facilities and hospitals listed in it.</p>
+        <label class="inline">Ward <select id="ward-pick"><option value="">Choose a ward</option></select></label>
+        <h2 class="mt">All charts are in Power BI</h2>
+        <p class="hint">Model comparison, patient data, the facility map, ward rankings and the data-cleaning audit
+          are in the five-page Power BI report.</p>
+        <button type="button" class="btn-run" data-go="powerbi">Open the Power BI dashboard</button>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== Heart risk predictor ===== -->
+  <section id="page-predict" class="page" hidden>
+    <div class="note warn"><strong>Experimental, for education only.</strong> Three models trained on 1,000 patients from one
+      hospital in India (Doppala &amp; Bhattacharyya, 2021). Not clinically validated, not a screening or diagnostic tool,
+      and not specific to Mumbai. Agreement between models does not make a result certain.</div>
+    <div class="grid predict-grid">
+      <article class="card">
+        <div class="card-head">
+          <div><span class="eyebrow">Classification engines · LR · RF · ANN</span><h2>Patient inputs</h2></div>
+          <div class="presets"><span class="hint">Fill from a real test-set patient:</span>
+            <button type="button" class="chip-btn" data-preset="0">Without disease</button>
+            <button type="button" class="chip-btn" data-preset="1">With disease</button></div>
+        </div>
+        <form id="predict-form" class="pform" method="post" action="/predict" novalidate></form>
+        <div class="form-actions">
+          <button type="submit" form="predict-form" class="btn-run" id="run-predict">Run all three models</button>
+          <button type="submit" form="predict-form" class="btn-ghost" id="run-server" formaction="/predict" formmethod="post">Submit as server form</button>
+        </div>
+        <p class="hint" id="preset-note"></p>
+        <p class="hint err-text" id="form-error" role="alert"></p>
+      </article>
+      <article class="card" aria-live="polite">
+        <span class="eyebrow">Live model assessment</span>
+        <div id="predict-result" class="presult"><div class="empty">Enter the values, or pick a preset, and run the models.
+          Each model returns the probability that this record belongs to the "heart disease" class.</div></div>
+      </article>
+    </div>
+  </section>
+
+  <!-- ===== Power BI dashboard ===== -->
+  <section id="page-powerbi" class="page" hidden>
+    <div class="card-head pbi-head">
+      <div><span class="eyebrow">Power BI · five pages</span>
+        <h2>Home · Model performance · Patient data · Mumbai facilities · Insights</h2></div>
+      <a class="api-link" id="pbi-open" href="#" target="_blank" rel="noopener" hidden>Open in Power BI ↗</a>
+    </div>
+    <div id="pbi-frame" class="pbi-frame"></div>
+    <article class="card" id="pbi-setup" hidden>
+      <h2>Connect the published report</h2>
+      <ol class="steps">
+        <li>Open <code>powerbi/MumbaiHealth.pbip</code> in Power BI Desktop and click <b>Refresh</b>.</li>
+        <li>Click <b>Publish</b> and choose a workspace.</li>
+        <li>In the Power BI service, open the report and choose <b>File → Embed report → Publish to web (public)</b>.
+          Copy the link that starts with <code>https://app.powerbi.com/view?r=</code>.</li>
+        <li>Paste it into <code>dashboard/powerbi-config.js</code> as <code>embedUrl</code>, save, and reload this page.</li>
+      </ol>
+      <p class="hint">Full steps, including what to do if your organisation blocks Publish to web, are in
+        <a href="../powerbi/POWERBI_GUIDE.md" target="_blank" rel="noopener">powerbi/POWERBI_GUIDE.md</a>.</p>
+    </article>
+    <article class="card"><h2>Download the data behind the report</h2><ul class="downloads">
+      <li><a href="../data/processed/clinical/clinical_clean.csv" download>clinical_clean.csv</a> <span class="hint">1,000 patients after cleaning, with train/test split</span></li>
+      <li><a href="../data/processed/clinical/test_predictions.csv" download>test_predictions.csv</a> <span class="hint">actual vs predicted, three models</span></li>
+      <li><a href="../outputs/tables/clinical_cleaning_log.csv" download>clinical_cleaning_log.csv</a></li>
+      <li><a href="../data/processed/facility_master.csv" download>facility_master.csv</a> <span class="hint">456 facility records with quality flags</span></li>
+      <li><a href="../data/processed/ward_indicators.csv" download>ward_indicators.csv</a> <span class="hint">24 wards, counts and rates</span></li>
+      <li><a href="../data/processed/hospital_list_clean.csv" download>hospital_list_clean.csv</a> <span class="hint">288 hospitals, ownership and beds</span></li>
+      <li><a href="../data/processed/ward_boundaries.geojson" download>ward_boundaries.geojson</a></li>
+    </ul></article>
+  </section>
+</main>
+
+<!-- ===== Ward detail drawer ===== -->
+<aside id="drawer" class="drawer" aria-hidden="true">
+  <button class="close" id="drawer-close" aria-label="Close">×</button>
+  <div id="drawer-body"></div>
+</aside>
+<div id="scrim" class="scrim" hidden></div>
+
+<footer>
+  Sources: OpenCity / MCGM facility KMLs (Nov 2025) · OpenCity Mumbai Wards Map · Census of India 2011 (ward-wise) ·
+  Doppala &amp; Bhattacharyya (2021), Cardiovascular_Disease_Dataset, Mendeley Data, doi:10.17632/dzz48mvjht.1.
+  Data come from <code>run_pipeline.py</code> outputs; re-run it and refresh to update. <a href="../">About this project</a> ·
+  <a href="../outputs/reports/final_report.pdf">Full report (PDF)</a>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="powerbi-config.js?v=1"></script>
+<script src="app.js?v=10"></script>
+<script src="clinical.js?v=2"></script>
+</body>
+</html>
